@@ -19,16 +19,23 @@ A primeira lista inclui demonstrações sobre ordens parciais formalizadas em Le
 - caracterização equivalente de um candidato ao meet;
 - igualdade indireta em ordens parciais, verificada por três abordagens.
 
-## Para a posteridade
+## Sobre este repositório
 
 Formalizar uma prova obriga cada hipótese escondida no papel a aparecer. O Lean não substitui a ideia matemática: ele registra com precisão onde usamos reflexividade, transitividade, antissimetria, igualdade e princípios lógicos.
 
 O objetivo deste repositório é preservar não apenas respostas, mas também o caminho percorrido até elas — incluindo as escolhas de formalização que tornam um argumento verificável e reproduzível.
 
+## Aviso sobre o conteúdo
+
+Este repositório é um registro de estudo. As resoluções manuscritas, interpretações e demais materiais são publicados como foram produzidos pelo aluno e podem conter erros. Não há garantia de corretude matemática ou de adequação das respostas aos enunciados originais.
+
+Os arquivos Lean confirmam apenas que as proposições neles formalizadas são aceitas pelo verificador sob as hipóteses declaradas; isso não substitui a revisão do enunciado, da modelagem escolhida ou das soluções manuscritas.
+
 ## Estrutura inicial
 
 ```text
 lista-casa-1/
+├── fotos-desenvolvimento/
 └── proof-partial-order-lean/
     ├── Exercicio1Meet.lean
     ├── Exercicio2Igualdade.lean
