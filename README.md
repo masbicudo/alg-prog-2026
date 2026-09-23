@@ -28,6 +28,10 @@ Este repositório é um registro de estudo. As resoluções manuscritas, interpr
 
 Os arquivos Lean confirmam apenas que as proposições neles formalizadas são aceitas pelo verificador sob as hipóteses declaradas; isso não substitui a revisão do enunciado, da modelagem escolhida ou das soluções manuscritas.
 
+## Licença
+
+Copyright 2026 Miguel Angelo. Este repositório é disponibilizado sob a [Licença Apache 2.0](LICENSE).
+
 ## Estrutura inicial
 
 ```text
