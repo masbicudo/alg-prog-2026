@@ -14,12 +14,7 @@ Repositório de estudos, exercícios e formalizações desenvolvidos para a disc
 
 Cada lista possui sua própria pasta. Projetos de verificação formal em Lean ficam dentro da lista correspondente, acompanhados das instruções, do toolchain e das dependências necessárias para reproduzir as provas.
 
-- [Lista de Casa 1](lista-casa-1/README.md) — exercícios, fotos do desenvolvimento e formalizações em Lean.
-
-A primeira lista inclui demonstrações sobre ordens parciais formalizadas em Lean 4 e Mathlib:
-
-- caracterização equivalente de um candidato ao meet;
-- igualdade indireta em ordens parciais, verificada por três abordagens.
+- **[Lista de Casa 1](lista-casa-1/README.md)** — exercícios e fotos do desenvolvimento, acompanhados de formalizações em Lean 4 e Mathlib sobre a caracterização equivalente de um candidato ao meet e a igualdade indireta em ordens parciais, esta verificada por três abordagens.
 
 ## Sobre este repositório
 
