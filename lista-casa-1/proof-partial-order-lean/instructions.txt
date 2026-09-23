@@ -1,0 +1,474 @@
+Estou estudando Álgebra para Programação e começando agora em Lean 4.
+Não sei praticamente nada de Lean.
+
+Quero usar Lean para FORMALIZAR E VERIFICAR as minhas próprias demonstrações.
+Não quero que Lean/Codex simplesmente encontre uma prova automática diferente.
+
+REGRAS IMPORTANTES
+
+- Explique a sintaxe de Lean conforme ela aparecer.
+- Traduza minha prova matemática passo a passo.
+- Quero saber a correspondência entre cada linha matemática e cada linha Lean.
+- Evite automação pesada (`aesop`, `omega`, `simp_all` etc.) no começo.
+- Prefira construções básicas:
+  `constructor`, `intro`, `have`, `exact`, `apply`, `rw`, `subst`,
+  instanciação de hipóteses universais etc.
+- Se usar `simp` ou `simpa`, explique exatamente que reescritas ele realizou.
+- Quando usar uma propriedade da ordem parcial, identifique explicitamente:
+  reflexividade, transitividade ou antissimetria.
+- Não substitua minha prova por uma prova mais curta sem antes formalizar a minha.
+- Depois que minha prova estiver compilando, podemos comparar com versões mais idiomáticas de Lean.
+
+============================================================
+EXERCÍCIO 1 — CARACTERIZAÇÃO EQUIVALENTE DO MEET
+============================================================
+
+Enunciado das notas:
+
+Seja `(P, ⊑)` uma ordem parcial.
+
+A especificação
+
+  ∀ x ∈ P,
+    (x ⊑ A ∧ x ⊑ B) ↔ x ⊑ (A ⊓ B)
+
+é equivalente ao par de propriedades:
+
+I)
+  (A ⊓ B) ⊑ A
+  ∧
+  (A ⊓ B) ⊑ B
+
+II)
+  ∀ x ∈ P,
+    (x ⊑ A ∧ x ⊑ B) → x ⊑ (A ⊓ B)
+
+Observação:
+`⊓` é o meet, não interseção de conjuntos.
+
+------------------------------------------------------------
+CUIDADO COM A FORMALIZAÇÃO DO MEET
+------------------------------------------------------------
+
+Não quero que Lean assuma de saída todas as propriedades de um meet
+e torne a demonstração circular.
+
+Pode ser melhor substituir temporariamente `A ⊓ B` por um elemento
+arbitrário `m : P`.
+
+Assim a afirmação pode ser formalizada aproximadamente como:
+
+  (∀ x : P, (x ≤ A ∧ x ≤ B) ↔ x ≤ m)
+    ↔
+  ((m ≤ A ∧ m ≤ B) ∧
+   ∀ x : P, (x ≤ A ∧ x ≤ B) → x ≤ m)
+
+Primeiro verifique comigo se essa tradução corresponde exatamente ao
+enunciado antes de provar qualquer coisa.
+
+------------------------------------------------------------
+MINHA PROVA NO PAPEL — PONTO IMPORTANTE
+------------------------------------------------------------
+
+Ao reconstruir a especificação `↔` a partir das propriedades I e II,
+existem duas implicações INTERNAS:
+
+  (x ⊑ A ∧ x ⊑ B)
+      →
+  x ⊑ A ⊓ B
+
+e
+
+  x ⊑ A ⊓ B
+      →
+  (x ⊑ A ∧ x ⊑ B).
+
+A PRIMEIRA NÃO PRECISA SER DEMONSTRADA.
+
+Ela é LITERALMENTE a Eq. II.
+
+Se chamarmos
+
+  D :=
+    ∀ x,
+      (x ⊑ A ∧ x ⊑ B) → x ⊑ A ⊓ B,
+
+então Eq. II é `D`, e a direção de ida da especificação também é `D`.
+
+Portanto essa parte é simplesmente:
+
+  D → D.
+
+Não invente uma demonstração adicional para ela.
+
+------------------------------------------------------------
+A PARTE QUE EU DEMONSTREI
+------------------------------------------------------------
+
+Para a outra direção interna, tomo `x` arbitrário e suponho:
+
+  x ⊑ A ⊓ B.
+
+Da Eq. I extraio:
+
+  A ⊓ B ⊑ A
+
+e
+
+  A ⊓ B ⊑ B.
+
+Então, por transitividade:
+
+  x ⊑ A ⊓ B
+  A ⊓ B ⊑ A
+  ----------------
+  x ⊑ A
+
+e analogamente:
+
+  x ⊑ A ⊓ B
+  A ⊓ B ⊑ B
+  ----------------
+  x ⊑ B.
+
+Junto os resultados:
+
+  x ⊑ A ∧ x ⊑ B.
+
+Logo:
+
+  x ⊑ A ⊓ B
+    →
+  (x ⊑ A ∧ x ⊑ B).
+
+Essa implicação, junto com a Eq. II, forma:
+
+  (x ⊑ A ∧ x ⊑ B)
+    ↔
+  x ⊑ A ⊓ B.
+
+Depois restauramos o quantificador universal.
+
+IMPORTANTE:
+Na minha folha escrevi informalmente “inverter a seta”.
+A descrição correta é:
+“provei separadamente a implicação oposta e juntei as duas para formar
+o bicondicional”.
+
+------------------------------------------------------------
+SOBRE A EQUIVALÊNCIA EXTERNA
+------------------------------------------------------------
+
+Há um `↔` interno na especificação e há também a afirmação de que
+“a especificação é equivalente ao par de propriedades”.
+
+Quero que você seja muito cuidadoso para não misturar esses dois níveis.
+
+Ao montar o teorema Lean completo, mostre quais são exatamente os
+subgoals produzidos pelo `↔` EXTERNO.
+
+Não resolva silenciosamente nenhum subgoal que minha prova no papel
+ainda não tenha tratado. Se existir uma obrigação adicional para provar
+a equivalência externa completa, mostre-a explicitamente para eu tentar
+resolvê-la.
+
+============================================================
+EXERCÍCIO 2 — IGUALDADE INDIRETA
+============================================================
+
+Enunciado:
+
+Seja `≤` uma ordem parcial. Prove:
+
+  (∀ x : P, x ≤ a ↔ x ≤ b) ↔ a = b.
+
+O exercício ainda pede:
+
+“Indique onde são usadas a reflexividade, a transitividade e a
+antissimetria.”
+
+Quero formalizar exatamente:
+
+  variable {P : Type*} [PartialOrder P]
+  variable {a b : P}
+
+  theorem igualdade_indireta :
+      (∀ x : P, x ≤ a ↔ x ≤ b) ↔ a = b := by
+    ...
+
+Existe uma discussão entre alunos dizendo que o teorema estaria errado
+porque a ordem é apenas parcial.
+
+Minha interpretação é que o teorema continua válido.
+
+Uma ordem parcial permite elementos incomparáveis, mas isso não limita
+a instanciação de:
+
+  ∀ x : P.
+
+Podemos escolher especificamente `x := a` e `x := b`.
+
+Quero usar Lean como verificação formal dessa afirmação.
+
+============================================================
+DIREÇÃO COMUM:
+(∀ x, x ≤ a ↔ x ≤ b) → a = b
+============================================================
+
+Esta direção será comum às três versões da prova completa.
+
+Suponho:
+
+  h : ∀ x : P, x ≤ a ↔ x ≤ b.
+
+Instancio em:
+
+  x := a.
+
+Obtenho:
+
+  a ≤ a ↔ a ≤ b.
+
+Pela reflexividade:
+
+  a ≤ a.
+
+Logo:
+
+  a ≤ b.
+
+Depois instancio:
+
+  x := b.
+
+Obtenho:
+
+  b ≤ a ↔ b ≤ b.
+
+Pela reflexividade:
+
+  b ≤ b.
+
+Logo:
+
+  b ≤ a.
+
+Agora tenho:
+
+  a ≤ b
+  b ≤ a.
+
+Pela antissimetria:
+
+  a = b.
+
+Quero traduzir isso literalmente para Lean.
+
+============================================================
+VERSÃO 1 DA VOLTA — PROVA POR CONTRADIÇÃO
+a = b → ∀ x, x ≤ a ↔ x ≤ b
+============================================================
+
+Minha primeira tentativa foi por contradição.
+
+Suponho:
+
+  a = b.
+
+Quero provar:
+
+  ∀ x, x ≤ a ↔ x ≤ b.
+
+Suponho a negação:
+
+  ¬ (∀ x, x ≤ a ↔ x ≤ b).
+
+Como `a = b`, substituo uma das variáveis pela outra.
+
+A expressão negada se transforma em algo equivalente a:
+
+  ¬ (∀ x, x ≤ b ↔ x ≤ b)
+
+(ou simetricamente usando `a`).
+
+Mas para todo `x`:
+
+  x ≤ b ↔ x ≤ b
+
+é verdadeiro.
+
+Logo chegamos a uma contradição.
+
+Portanto:
+
+  ∀ x, x ≤ a ↔ x ≤ b.
+
+Quero formalizar esta versão sem deixar `simp` esconder toda a prova.
+Se Lean exigir princípios de lógica clássica para essa forma de prova,
+explique onde e por quê.
+
+============================================================
+VERSÃO 2 DA VOLTA — SUBSTITUIÇÃO DIRETA
+a = b → ∀ x, x ≤ a ↔ x ≤ b
+============================================================
+
+Esta é a versão mais curta.
+
+Suponho:
+
+  h : a = b.
+
+Tomo `x : P` arbitrário.
+
+Como `a = b`, posso substituir uma ocorrência pela outra.
+
+Então:
+
+  x ≤ a ↔ x ≤ b
+
+vira simplesmente algo como:
+
+  x ≤ b ↔ x ≤ b.
+
+Portanto é verdadeiro.
+
+Assim:
+
+  ∀ x, x ≤ a ↔ x ≤ b.
+
+Quero formalizar esta prova de maneira explícita primeiro,
+provavelmente usando `rw`, `subst` ou algo semelhante.
+
+Depois podemos comparar diferentes formas idiomáticas do Lean.
+
+============================================================
+VERSÃO 3 DA VOLTA — USANDO AS PROPRIEDADES DA ORDEM
+a = b → ∀ x, x ≤ a ↔ x ≤ b
+============================================================
+
+Esta é a versão que considero pedagogicamente mais alinhada com o
+enunciado, pois faz aparecer reflexividade e transitividade.
+
+Suponho:
+
+  h : a = b.
+
+Por reflexividade:
+
+  a ≤ a
+  b ≤ b.
+
+Usando `a = b`, obtenho:
+
+  a ≤ b
+  b ≤ a.
+
+Agora tomo:
+
+  x : P
+
+arbitrário.
+
+Para a primeira direção, suponho:
+
+  x ≤ a.
+
+Como também tenho:
+
+  a ≤ b,
+
+pela transitividade:
+
+  x ≤ b.
+
+Logo:
+
+  x ≤ a → x ≤ b.
+
+Para a segunda direção, suponho:
+
+  x ≤ b.
+
+Como:
+
+  b ≤ a,
+
+pela transitividade:
+
+  x ≤ a.
+
+Logo:
+
+  x ≤ b → x ≤ a.
+
+Juntando:
+
+  x ≤ a ↔ x ≤ b.
+
+Como `x` era arbitrário:
+
+  ∀ x : P, x ≤ a ↔ x ≤ b.
+
+Nesta versão aparecem:
+
+- reflexividade;
+- transitividade.
+
+Na direção comum anterior apareceram:
+
+- reflexividade;
+- antissimetria.
+
+Portanto, na prova completa aparecem as três propriedades solicitadas
+pelo exercício.
+
+============================================================
+O QUE QUERO QUE FAÇAMOS NO LEAN
+============================================================
+
+Quero começar pelo Exercício 2.
+
+Não escreva todas as provas completas imediatamente.
+
+Primeiro:
+
+1. Ajude-me a criar um projeto/arquivo Lean 4 mínimo usando Mathlib.
+2. Mostre a declaração do teorema.
+3. Explique:
+     `[PartialOrder P]`
+     `by`
+     `constructor`
+     `intro`
+     `have`
+     `exact`
+4. Depois formalize comigo uma linha de cada vez.
+
+Quero aprender explicitamente como Lean representa:
+
+- reflexividade;
+- transitividade;
+- antissimetria;
+- instanciação de `∀`;
+- introdução e eliminação de `→`;
+- introdução e eliminação de `↔`;
+- introdução e eliminação de `∧`;
+- substituição por igualdade;
+- descarga de uma hipótese;
+- prova por contradição.
+
+Depois de construir a primeira prova completa, quero três teoremas ou
+exemplos separados verificando as três versões do Exercício 2:
+
+1. igualdade indireta com volta por contradição;
+2. igualdade indireta com volta por substituição direta;
+3. igualdade indireta com volta usando reflexividade + transitividade.
+
+A direção
+
+  (∀ x, x ≤ a ↔ x ≤ b) → a = b
+
+pode ser a mesma nas três.
+
+Por fim, quero que Lean compile todas as três versões.
+
+Só depois passaremos ao Exercício 1.

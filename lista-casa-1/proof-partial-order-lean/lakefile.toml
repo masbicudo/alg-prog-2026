@@ -1,0 +1,21 @@
+name = "proof_partial_order_lean"
+version = "0.1.0"
+keywords = ["math"]
+defaultTargets = ["Exercicio1Meet", "Exercicio2Igualdade"]
+
+[leanOptions]
+pp.unicode.fun = true # pretty-prints `fun a ↦ b`
+autoImplicit = false
+relaxedAutoImplicit = false
+maxSynthPendingDepth = 3
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "5ed2965256430c3649e86755f9576b54eca72435"
+
+[[lean_lib]]
+name = "Exercicio1Meet"
+
+[[lean_lib]]
+name = "Exercicio2Igualdade"
